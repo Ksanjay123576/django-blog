@@ -1,7 +1,8 @@
 import os
 import django
+import json
 from cryptography.fernet import Fernet
-from django.core.management import call_command
+from django.core.serializers import deserialize
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
@@ -11,13 +12,9 @@ key = os.environ["DATABASE_ENCRYPTION_KEY"]
 with open("data.json.enc", "rb") as f:
     encrypted_data = f.read()
 
-data = Fernet(key).decrypt(encrypted_data)
+data = Fernet(key).decrypt(encrypted_data).decode("utf-8")
 
-with open("data_restore.json", "wb") as f:
-    f.write(data)
-
-call_command("loaddata", "data_restore.json")
-
-os.remove("data_restore.json")
+for obj in deserialize("json", data):
+    obj.save()
 
 print("Database data restored successfully!")
