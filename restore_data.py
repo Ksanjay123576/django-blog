@@ -9,7 +9,6 @@ django.setup()
 
 User = get_user_model()
 
-# Don't restore again if users already exist
 if User.objects.exists():
     print("Database already contains users. Skipping restore.")
 else:
@@ -23,9 +22,18 @@ else:
     data = Fernet(key).decrypt(encrypted_data).decode("utf-16")
 
     count = 0
+    skipped_profiles = 0
 
     for obj in deserialize("json", data):
+
+        # Skip profile records because Django/user registration
+        # may already create profiles automatically.
+        if obj.object.__class__.__name__ == "Profile":
+            skipped_profiles += 1
+            continue
+
         obj.save()
         count += 1
 
     print(f"Database data restored successfully! Total records: {count}")
+    print(f"Skipped profiles: {skipped_profiles}")
