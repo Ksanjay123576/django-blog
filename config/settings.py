@@ -25,16 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zkq0i&w_va$(ak!7l&0q))4#^0re5xkka5+ri0mu^1df$(^udv'
+SECRET_KEY = SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-
-    "django-blog-xf5b.onrender.com",
-    "localhost",
-    "127.0.0.1",
+    '.onrender.com',
+    'localhost',
+    '127.0.0.1',
 ]
 
 
